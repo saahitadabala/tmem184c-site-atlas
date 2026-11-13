@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="TMEM184C in its membrane, with every functional site clickable and the evidence behind each one.">
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; padding: 0; }
+  body { font: 14px system-ui, -apple-system, sans-serif; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<title>TMEM184C Site Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="css/app.css">
+<script src="https://cdn.jsdelivr.net/npm/3dmol@2.4.0/build/3Dmol-min.js"></script>
+
+<div class="desktop">
+  <div class="window" id="window">
+
+    <div class="titlebar">
+      <div class="avatar" id="avatar" title="Daniel Isom">
+        <img src="assets/isom.png" alt="Daniel Isom">
+      </div>
+      <div class="title-text">
+        <span class="title-main">184C</span>
+        <span class="title-sub">Site Atlas</span>
+      </div>
+    </div>
+
+    <div class="window-body" id="window-body">
+
+      <div id="problems" hidden></div>
+
+      <div class="main-row">
+        <div class="stage-wrap">
+          <div class="stage">
+            <div id="canvas"></div>
+            <div id="loading">building the membrane&hellip;</div>
+            <div class="hint">drag to rotate &middot; scroll to zoom &middot; right-drag to pan &middot; click a marker</div>
+          </div>
+        </div>
+
+        <aside class="panel-wrap">
+          <div class="panel-head">
+            <span>Information</span>
+            <span class="store-state" id="store-state">connecting</span>
+          </div>
+          <div class="panel" id="panel"></div>
+        </aside>
+      </div>
+
+      <div class="controls">
+        <fieldset class="group group-legend">
+          <legend>Site groups</legend>
+          <div id="legend"></div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Tail spread</legend>
+          <div class="group-inner">
+            <input type="range" id="exaggeration" min="60" max="200" value="100" step="5">
+            <output id="exaggeration-value">1.00&times;</output>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Display</legend>
+          <div class="group-inner group-stack">
+            <span class="ctl">
+              <input type="checkbox" id="toggle-labels">
+              <label for="toggle-labels">All labels</label>
+            </span>
+            <span class="ctl">
+              <input type="checkbox" id="toggle-constructs">
+              <label for="toggle-constructs">Constructs only</label>
+            </span>
+            <span class="ctl">
+              <input type="checkbox" id="toggle-lipids" checked>
+              <label for="toggle-lipids">Lipids</label>
+            </span>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Colour &amp; view</legend>
+          <div class="group-inner group-stack">
+            <select id="color-by">
+              <option value="structure">Structure</option>
+              <option value="plddt">pLDDT</option>
+            </select>
+            <button type="button" class="xp-btn" id="reset-view">Reset view</button>
+          </div>
+        </fieldset>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>
