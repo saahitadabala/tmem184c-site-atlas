@@ -18,6 +18,7 @@ export class StructureViewer {
     this.geometry = geometry;
     this.viewer = window.$3Dmol.createViewer(element, {
       backgroundColor: VIEW.background,
+      backgroundAlpha: VIEW.backgroundAlpha,
       antialias: true,
     });
     this.model = null;

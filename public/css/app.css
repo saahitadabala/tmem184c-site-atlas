@@ -32,6 +32,9 @@
 
   --font: Tahoma, 'Segoe UI', Verdana, Geneva, sans-serif;
   --mono: Consolas, 'Courier New', ui-monospace, monospace;
+
+  /* how strongly the portrait shows behind the structure; 0 hides it */
+  --portrait-opacity: 0.10;
   color-scheme: light;
 }
 
@@ -176,7 +179,30 @@ body {
 }
 
 .stage { position: relative; flex: 1; min-height: 0; background: var(--vp-bg); }
-#canvas { position: absolute; inset: 0; }
+
+/* Portrait, composited OVER the canvas. It cannot go behind: a transparent
+   canvas stops 3Dmol drawing entirely (see VIEW.backgroundAlpha). mix-blend-mode
+   screen means dark pixels of the portrait add nothing while light ones lighten,
+   so on this near-black viewport the face glows faintly without veiling the
+   structure. pointer-events:none keeps it clear of marker picking. */
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  mix-blend-mode: screen;
+  background-image: url("../assets/isom.png");
+  background-repeat: no-repeat;
+  background-position: center 42%;
+  background-size: auto 94%;
+  /* brightness lifts the mid-greys so the face reads against the near-black
+     viewport; without it the portrait is invisible below ~0.3 opacity */
+  filter: grayscale(1) brightness(1.9) contrast(1.05);
+  opacity: var(--portrait-opacity);
+  pointer-events: none;
+}
+
+#canvas { position: absolute; inset: 0; z-index: 1; }
 
 #loading {
   position: absolute;

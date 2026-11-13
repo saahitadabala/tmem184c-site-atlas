@@ -122,6 +122,14 @@ export const MARKERS = {
 
 export const VIEW = {
   background: '#0e1320',
+  /**
+   * Keep this at 1. backgroundAlpha 0 does make the canvas transparent, but in
+   * 3Dmol 2.4.0 it also stops the scene drawing at all - the model and every
+   * shape stay in the scene and render() succeeds, yet nothing appears. So the
+   * portrait is composited OVER the canvas with mix-blend-mode: screen instead
+   * of sitting behind it. See .stage::before in app.css.
+   */
+  backgroundAlpha: 1,
   /** >1 zooms in. zoomTo() frames the whole membrane sheet, which is much wider
    *  than the protein, so the opening view needs pulling back in. */
   initialZoom: 1.4,
