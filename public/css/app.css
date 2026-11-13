@@ -654,3 +654,7 @@ select {
   padding: 4px 6px;
   margin-top: 5px;
 }
+
+/* the site picker carries "W334 — W334A", so it needs more room than the
+   colour dropdown next to it */
+#site-jump { min-width: 170px; }

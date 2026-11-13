@@ -33,6 +33,8 @@ function select(residue, pushHash) {
   const site = siteByResidue(residue);
   if (site) panel.render(site, Geometry);
   syncScene();
+  const jump = document.getElementById('site-jump');
+  if (jump && jump.value !== String(residue)) jump.value = String(residue);
   if (site && pushHash !== false) {
     const want = '#' + site.aa + site.residue;
     if (window.location.hash !== want) window.location.hash = want;
@@ -53,7 +55,7 @@ function selectFromHash() {
   if (!site) return false;
   if (!ui.activeGroups.has(site.group)) return false;
   select(site.residue, false);
-  scene.focusResidue(site.residue);
+  scene.revealResidue(site.residue);
   return true;
 }
 
@@ -83,6 +85,47 @@ function buildLegend(host) {
   });
 }
 
+
+/**
+ * The site picker.
+ *
+ * Clicking markers in 3D is not enough on its own: buried sites such as the
+ * C157-C159 belt project to almost the same pixel as the core from the opening
+ * camera and are simply invisible until the view is turned. This makes every
+ * site reachable whatever the angle, and revealResidue turns the camera so the
+ * chosen one is actually in front.
+ */
+function buildSiteJump() {
+  const sel = document.getElementById('site-jump');
+  Object.entries(GROUPS).forEach(([key, g]) => {
+    const inGroup = SITES.filter((s) => s.group === key)
+      .sort((a, b) => a.residue - b.residue);
+    if (!inGroup.length) return;
+    const og = document.createElement('optgroup');
+    og.label = g.label;
+    inGroup.forEach((s) => {
+      const o = document.createElement('option');
+      o.value = String(s.residue);
+      o.textContent = s.aa + s.residue + (s.construct ? '  —  ' + s.construct : '');
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+  sel.addEventListener('change', () => {
+    const r = Number(sel.value);
+    if (!r) return;
+    if (!ui.activeGroups.has(siteByResidue(r).group)) {
+      // picking a hidden group's site turns that group back on, otherwise the
+      // marker would be selected but not drawn
+      ui.activeGroups.add(siteByResidue(r).group);
+      document.querySelectorAll('.legend-chip').forEach((b) => {
+        b.classList.toggle('active', ui.activeGroups.has(b.dataset.group));
+      });
+    }
+    select(r);
+    scene.revealResidue(r);
+  });
+}
 
 function wireControls() {
   const ex = document.getElementById('exaggeration');
@@ -151,6 +194,7 @@ async function main() {
   scene.rememberHome();
 
   buildLegend(document.getElementById('legend'));
+  buildSiteJump();
   wireControls();
   panel.empty(SITES.length);
 

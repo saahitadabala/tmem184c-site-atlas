@@ -135,13 +135,48 @@ export class StructureViewer {
   }
 
   /**
-   * Recentre on a residue. 3Dmol's center() takes an atom SELECTION, not a point,
-   * so this only moves for residues that exist in the model; schematic tail
-   * residues have no atoms and are left to the marker highlight alone.
+   * Recentre on any residue, measured or schematic.
+   *
+   * 3Dmol's center() takes an atom SELECTION, so it cannot reach the schematic
+   * tail residues, which have no atoms. The view vector handles both: elements
+   * 0-2 are the model group's position, i.e. the negated centre of rotation, so
+   * writing the residue's coordinates there centres on an arbitrary point.
    */
   focusResidue(n) {
-    if (!this.geometry.isMeasured(n)) return;
-    this.viewer.center({ resi: n }, 350);
+    const p = this.allPositions()[n];
+    if (!p) return;
+    const view = this.viewer.getView().slice();
+    view[0] = -p.x;
+    view[1] = -p.y;
+    view[2] = -p.z;
+    this.viewer.setView(view);
+    this.viewer.render();
+  }
+
+  /**
+   * Turn the camera so a residue is not hidden behind the rest of the model.
+   * Buried sites - the C157-C159 belt especially - sit directly behind the core
+   * from the opening angle and are invisible until the view is rotated, which is
+   * not discoverable. Spin about y until the residue is the nearest thing along
+   * the view axis, then centre on it.
+   */
+  revealResidue(n) {
+    const p = this.allPositions()[n];
+    if (!p) return;
+    // the model-space direction the camera looks along, from the view quaternion
+    const v = this.viewer.getView();
+    const [q0, q1, q2, q3] = [v[4], v[5], v[6], v[7]];
+    // rotate (0,0,1) by the inverse quaternion to get the view axis in model space
+    const ax = 2 * (q0 * q2 - q3 * q1);
+    const az = 1 - 2 * (q0 * q0 + q1 * q1);
+    // angle between the residue's x/z bearing and the current view bearing
+    const want = Math.atan2(p.x, p.z);
+    const have = Math.atan2(ax, az);
+    let turn = ((want - have) * 180) / Math.PI;
+    while (turn > 180) turn -= 360;
+    while (turn < -180) turn += 360;
+    this.focusResidue(n);
+    if (Math.abs(turn) > 12) this.viewer.rotate(turn, 'y', 600);
     this.viewer.render();
   }
 

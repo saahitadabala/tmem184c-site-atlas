@@ -3,8 +3,13 @@
  *
  * One sphere per site, coloured by functional group, sized by whether a construct
  * is proposed, and wrapped in a translucent halo so a small marker is still an
- * easy click target. Sites whose modification is predicted but never observed get
- * a hollow look, so the drawing never implies more evidence than exists.
+ * easy click target.
+ *
+ * Every marker is drawn OPAQUE. Predicted-but-unobserved sites used to be drawn
+ * semi-transparent to signal weaker evidence, but markers buried inside the
+ * bundle then disappeared entirely while staying clickable - 3Dmol picks by
+ * raycast regardless of occlusion - so the only way to find them was to click
+ * empty-looking space. Evidence strength is the panel's job.
  */
 
 import { GROUPS, MARKERS, PULSE } from './config.js';
@@ -123,7 +128,6 @@ export class MarkerLayer {
       const isSel = site.residue === selected;
       const base = site.construct ? MARKERS.radiusConstruct : MARKERS.radius;
       const r = base * (isSel ? MARKERS.selectedScale : 1);
-      const hollow = site.status !== 'observed';
 
       // The selected marker is rendered by the pulse loop instead, so that a
       // static sphere does not sit inside the animated one and flatten it.
@@ -142,7 +146,7 @@ export class MarkerLayer {
           center: p,
           radius: r,
           color: group.color,
-          opacity: hollow ? 0.55 : 1,
+          opacity: 1,
           clickable: true,
           callback: () => { if (this.onPick) this.onPick(site.residue); },
         }));

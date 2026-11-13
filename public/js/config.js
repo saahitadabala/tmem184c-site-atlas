@@ -29,6 +29,10 @@ export const STATUS = {
 };
 
 export const STRUCTURE = {
+  /** Kept fully opaque. Transparency here does reveal markers buried inside the
+   *  bundle, but it washes the structure out badly against the portrait, and
+   *  opaque markers plus the site picker solve the same problem without the
+   *  cost. */
   cartoon: { style: 'oval', thickness: 0.5, arrows: true },
   colorMeasured: '#8d9bb0',
   colorHelix: '#aab6c7',
@@ -111,10 +115,10 @@ export const PULSE = {
 };
 
 export const MARKERS = {
-  radius: 1.95,
-  radiusConstruct: 2.5,
-  haloScale: 1.5,
-  haloOpacity: 0.22,
+  radius: 2.3,
+  radiusConstruct: 2.9,
+  haloScale: 1.55,
+  haloOpacity: 0.34,
   selectedScale: 1.35,
   labelFont: 13,
   labelBackOpacity: 0.72,
